@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>QueryWave</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="wrap">
+    <h1>QueryWave</h1>
+    <p class="sub">Upload your schema once, then ask questions. Get SQL + validation warnings.</p>
+    <div style="margin-top:16px; opacity:0.75; font-size:14px;">
+      Early version — review SQL before production use.
+    </div>
+    
+
+    <div class="row">
+      <div class="card">
+        <h2>1) Upload schema.sql</h2>
+        <form id="schemaForm">
+          <input type="file" id="schemaFile" name="file" accept=".sql" required />
+          <button type="submit">Upload</button>
+        </form>
+
+        <div class="meta">
+          <div><b>Schema uploads remaining today:</b> <span id="schemasRemaining">{{ schemas_remaining }}</span></div>
+          <div id="schemaInfo" class="muted"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>2) Ask a question</h2>
+
+        <div class="muted">Queries remaining today: <span id="generatesRemaining">{{ generates_remaining }}</span></div>
+
+        <label class="label">Schema ID</label>
+        <input id="schemaId" placeholder="Upload schema first (auto-saved)" />
+
+        <label class="label">Question</label>
+        <textarea id="question" rows="5" maxlength="{{ max_question_chars }}" placeholder="e.g. List all employees with their branch name"></textarea>
+        <div class="muted"><span id="charCount">0</span> / {{ max_question_chars }}</div>
+
+        <div class="btnrow">
+          <button id="generateBtn">Generate SQL</button>
+          <button id="resetBtn" type="button" class="ghost">Reset schema</button>
+        </div>
+
+        <div id="banner" class="banner hidden"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Output</h2>
+
+      <div class="split">
+        <div>
+          <div class="topline">
+            <h3>SQL</h3>
+            <button id="copySqlBtn" class="small">Copy SQL</button>
+          </div>
+          <pre id="sqlOut" class="pre"></pre>
+        </div>
+
+        <div>
+          <div class="topline">
+            <h3>Validation</h3>
+            <button id="copyValBtn" class="small">Copy JSON</button>
+          </div>
+          <pre id="valOut" class="pre"></pre>
+        </div>
+      </div>
+
+      <div>
+        <h3>Message</h3>
+        <pre id="msgOut" class="pre"></pre>
+      </div>
+    </div>
+
+    <p class="foot muted">
+      Early experiment. If you find edge cases, that’s the point.
+    </p>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
