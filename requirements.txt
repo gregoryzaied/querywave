@@ -4,3 +4,4 @@ sqlparse
 fastapi
 uvicorn
 openai
+python-multipart
