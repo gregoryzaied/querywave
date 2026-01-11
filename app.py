@@ -365,6 +365,13 @@ async def upload_schema(request: Request, response: Response, file: UploadFile =
     require_limit(bucket, "schemas", MAX_SCHEMAS_PER_DAY, "schema uploads")
 
     raw = await file.read()
+        
+    if file.filename and not file.filename.lower().endswith(".sql"):
+        raise HTTPException(
+            status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+            detail="Please upload a .sql file (schema.sql)."
+        )
+
 
     # 1) Reject upload if file is too large (bytes check)
     if len(raw) > MAX_UPLOAD_BYTES:
@@ -650,3 +657,9 @@ async def debug_usage(request: Request, response: Response):
             "max_columns_per_table": MAX_COLUMNS_PER_TABLE,
         },
     }
+
+
+if __name__ == "__main__":
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
