@@ -54,3 +54,20 @@ button.small { margin-top: 0; padding: 7px 10px; border-radius: 10px; background
 @media (max-width: 900px) {
   .row, .split { grid-template-columns: 1fr; }
 }
+
+.examples { margin-top: 12px; }
+.examples-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+
+.exbtn {
+  margin-top: 0;
+  padding: 7px 10px;
+  border-radius: 10px;
+  background: transparent;
+  border: 1px solid #223048;
+  color:#e7eef7;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.exbtn:hover { background: rgba(255,255,255,0.06); }
+

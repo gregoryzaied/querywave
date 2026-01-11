@@ -11,6 +11,9 @@ const banner = $("banner");
 const sqlOut = $("sqlOut");
 const valOut = $("valOut");
 const msgOut = $("msgOut");
+const explainOut = $("explainOut");
+const examplesEl = $("examples");
+
 
 const copySqlBtn = $("copySqlBtn");
 const copyValBtn = $("copyValBtn");
@@ -66,11 +69,25 @@ schemaForm.addEventListener("submit", async (e) => {
   try {
     const file = schemaFile.files[0];
     if (!file) throw new Error("Select a schema.sql file first.");
+        // Front-end gate: don't even send non-.sql files
+        const name = (file.name || "").toLowerCase();
+        if (!name.endsWith(".sql")) {
+          throw new Error("Invalid file type. Please upload a .sql schema file.");
+        }
+    
 
     const form = new FormData();
     form.append("file", file, file.name);
 
     const res = await fetch("/schema", { method: "POST", body: form });
+        // HARD stop on non-2xx (FastAPI HTTPException returns {detail: "..."} with no schema_id)
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          showBanner(errData.detail || "Schema upload failed.");
+          setLoading(false);
+          return;
+        }
+    
     setUsageFromHeaders(res);
 
     const data = await res.json();
@@ -81,14 +98,14 @@ schemaForm.addEventListener("submit", async (e) => {
       return;
     }
 
-    // If your /schema returns envelope: status ok + schema_id etc.
-    const sid = data.schema_id || (data.status === "ok" ? data.schema_id : null);
-    if (!sid && data.schema_id === undefined) {
-      // handle plain schema endpoint response
-      if (data.schema_id) {}
+    const sid = data.schema_id;
+    if (!sid) {
+      showBanner("Schema upload failed: server did not return schema_id.");
+      setLoading(false);
+      return;
     }
+    saveSchemaId(sid);
 
-    saveSchemaId(data.schema_id);
     schemaInfo.textContent =
       `Uploaded. Tables: ${data.summary?.tables ?? "?"}, Columns: ${data.summary?.columns ?? "?"}. Preview: ${JSON.stringify(data.schema_preview ?? [])}`;
 
@@ -106,6 +123,8 @@ generateBtn.addEventListener("click", async (e) => {
   sqlOut.textContent = "";
   valOut.textContent = "";
   msgOut.textContent = "";
+  explainOut.textContent = "";
+
 
   try {
     const sid = schemaId.value.trim();
@@ -131,6 +150,8 @@ generateBtn.addEventListener("click", async (e) => {
     sqlOut.textContent = data.sql || "";
     valOut.textContent = JSON.stringify(data.validation || {}, null, 2);
     msgOut.textContent = data.message || JSON.stringify(data.classification || {}, null, 2);
+    explainOut.textContent = buildExplanation(data);
+
 
   } catch (err) {
     showBanner(err.message || String(err));
@@ -146,6 +167,7 @@ resetBtn.addEventListener("click", () => {
   sqlOut.textContent = "";
   valOut.textContent = "";
   msgOut.textContent = "";
+  explainOut.textContent = "";
   hideBanner();
 });
 
@@ -169,6 +191,58 @@ copyValBtn.addEventListener("click", async () => {
   }
 });
 
+
+
+const EXAMPLES = [
+  "List all employees with their branch name",
+  "Show total employees per branch",
+  "List branches with zero employees",
+  "List the first 5 employees with their branch name and branch location"
+];
+
+function renderExamples() {
+  if (!examplesEl) return;
+
+  examplesEl.innerHTML = EXAMPLES.map((t) =>
+    `<button type="button" class="exbtn" data-example="${encodeURIComponent(t)}">${t}</button>`
+  ).join("");
+
+  examplesEl.querySelectorAll("button[data-example]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const text = decodeURIComponent(btn.getAttribute("data-example") || "");
+      question.value = text;
+      charCount.textContent = String(question.value.length);
+      question.focus();
+    });
+  });
+}
+function buildExplanation(data) {
+  const v = data.validation || {};
+  const tables = Array.isArray(v.tables_detected) ? v.tables_detected : [];
+
+  const parts = [];
+
+  if (tables.length) parts.push(`Tables used: ${tables.join(", ")}`);
+  else parts.push("Tables used: (none detected)");
+
+  if (v.alias_map && typeof v.alias_map === "object" && Object.keys(v.alias_map).length) {
+    parts.push(`Aliases: ${JSON.stringify(v.alias_map)}`);
+  }
+
+  if (Array.isArray(v.join_warnings) && v.join_warnings.length) {
+    parts.push(`Join notes: ${v.join_warnings.join("; ")}`);
+  } else {
+    parts.push("Join notes: none");
+  }
+
+  if (data.message) parts.push(`Note: ${data.message}`);
+
+  return parts.join("\n");
+}
+
+
 // init
 loadSchemaId();
 charCount.textContent = String(question.value.length);
+renderExamples();
+
