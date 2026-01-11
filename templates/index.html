@@ -40,6 +40,11 @@
         <label class="label">Question</label>
         <textarea id="question" rows="5" maxlength="{{ max_question_chars }}" placeholder="e.g. List all employees with their branch name"></textarea>
         <div class="muted"><span id="charCount">0</span> / {{ max_question_chars }}</div>
+        <div class="examples">
+          <div class="label">Examples (click to paste)</div>
+          <div id="examples" class="examples-list"></div>
+        </div>
+        
 
         <div class="btnrow">
           <button id="generateBtn">Generate SQL</button>
@@ -75,6 +80,11 @@
         <h3>Message</h3>
         <pre id="msgOut" class="pre"></pre>
       </div>
+      <div>
+        <h3>Explanation</h3>
+        <pre id="explainOut" class="pre"></pre>
+      </div>
+      
     </div>
 
     <p class="foot muted">
@@ -82,6 +92,6 @@
     </p>
   </div>
 
-  <script src="/static/app.js"></script>
+  <script src="/static/app.js?v=1.1"></script>
 </body>
 </html>
