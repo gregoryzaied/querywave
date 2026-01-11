@@ -16,3 +16,5 @@ test.sql
 
 # Secrets (future-proof)
 .env
+
+schemas/*.json
