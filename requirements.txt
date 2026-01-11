@@ -3,3 +3,4 @@ Jinja2
 sqlparse
 fastapi
 uvicorn
+openai
