@@ -1,6 +1,6 @@
-function $(id) { return document.getElementById(id); }
-
+const $id = (id) => document.getElementById(id);
 const $ = (selector) => document.querySelector(selector);
+
 
 function track(name, data) {
   try {
@@ -11,28 +11,28 @@ function track(name, data) {
 }
 
 
-const schemaForm = $("schemaForm");
-const schemaFile = $("schemaFile");
-const schemaId = $("schemaId");
-const question = $("question");
-const generateBtn = $("generateBtn");
-const resetBtn = $("resetBtn");
+const schemaForm = $id("schemaForm");
+const schemaFile = $id("schemaFile");
+const schemaId = $id("schemaId");
+const question = $id("question");
+const generateBtn = $id("generateBtn");
+const resetBtn = $id("resetBtn");
 
-const banner = $("banner");
-const sqlOut = $("sqlOut");
-const valOut = $("valOut");
-const msgOut = $("msgOut");
-const explainOut = $("explainOut");
-const examplesEl = $("examples");
+const banner = $id("banner");
+const sqlOut = $id("sqlOut");
+const valOut = $id("valOut");
+const msgOut = $id("msgOut");
+const explainOut = $id("explainOut");
+const examplesEl = $id("examples");
 
+const copySqlBtn = $id("copySqlBtn");
+const copyValBtn = $id("copyValBtn");
 
-const copySqlBtn = $("copySqlBtn");
-const copyValBtn = $("copyValBtn");
+const charCount = $id("charCount");
+const schemasRemaining = $id("schemasRemaining");
+const generatesRemaining = $id("generatesRemaining");
+const schemaInfo = $id("schemaInfo");
 
-const charCount = $("charCount");
-const schemasRemaining = $("schemasRemaining");
-const generatesRemaining = $("generatesRemaining");
-const schemaInfo = $("schemaInfo");
 
 function showBanner(text) {
   banner.textContent = text;
@@ -192,7 +192,7 @@ if (copySqlBtn) {
       await navigator.clipboard.writeText(sqlOut.textContent || "");
       showBanner("Copied SQL to clipboard.");
       setTimeout(hideBanner, 900);
-      umamiTrack("copy_sql_clicked");
+      track("copy_sql_clicked");
     } catch {
       showBanner("Copy failed (browser permissions).");
     }
@@ -205,7 +205,7 @@ if (copyValBtn) {
       await navigator.clipboard.writeText(valOut.textContent || "");
       showBanner("Copied validation JSON to clipboard.");
       setTimeout(hideBanner, 900);
-      umamiTrack("copy_json_clicked");
+      track("copy_json_clicked");
     } catch {
       showBanner("Copy failed (browser permissions).");
     }
