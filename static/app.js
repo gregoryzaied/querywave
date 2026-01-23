@@ -1,5 +1,4 @@
-const $id = (id) => document.getElementById(id);
-const $ = (selector) => document.querySelector(selector);
+
 
 
 function track(name, data) {
