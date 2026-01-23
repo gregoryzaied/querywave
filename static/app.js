@@ -186,29 +186,32 @@ resetBtn.addEventListener("click", () => {
   hideBanner();
 });
 
-copySqlBtn.addEventListener("click", async () => {
-  track("copy_sql_clicked");
-  try {
-    await navigator.clipboard.writeText(sqlOut.textContent || "");
-    showBanner("Copied SQL to clipboard.");
-    setTimeout(hideBanner, 900);
-  } catch {
-    track("copy_failed");
-    showBanner("Copy failed (browser permissions).");
-  }
-});
+if (copySqlBtn) {
+  copySqlBtn.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(sqlOut.textContent || "");
+      showBanner("Copied SQL to clipboard.");
+      setTimeout(hideBanner, 900);
+      umamiTrack("copy_sql_clicked");
+    } catch {
+      showBanner("Copy failed (browser permissions).");
+    }
+  });
+}
 
-copyValBtn.addEventListener("click", async () => {
-  track("copy_validation_clicked");
-  try {
-    await navigator.clipboard.writeText(valOut.textContent || "");
-    showBanner("Copied validation JSON to clipboard.");
-    setTimeout(hideBanner, 900);
-  } catch {
-    track("copy_failed");
-    showBanner("Copy failed (browser permissions).");
-  }
-});
+if (copyValBtn) {
+  copyValBtn.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(valOut.textContent || "");
+      showBanner("Copied validation JSON to clipboard.");
+      setTimeout(hideBanner, 900);
+      umamiTrack("copy_json_clicked");
+    } catch {
+      showBanner("Copy failed (browser permissions).");
+    }
+  });
+}
+
 
 
 
