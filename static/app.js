@@ -8,6 +8,8 @@ function track(name, data) {
     }
   } catch {}
 }
+const $id = (id) => document.getElementById(id);
+
 
 
 const schemaForm = $id("schemaForm");
