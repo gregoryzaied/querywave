@@ -1,5 +1,16 @@
 function $(id) { return document.getElementById(id); }
 
+const $ = (selector) => document.querySelector(selector);
+
+function track(name, data) {
+  try {
+    if (window.umami && typeof window.umami.track === "function") {
+      window.umami.track(name, data);
+    }
+  } catch {}
+}
+
+
 const schemaForm = $("schemaForm");
 const schemaFile = $("schemaFile");
 const schemaId = $("schemaId");
@@ -63,6 +74,8 @@ question.addEventListener("input", () => {
 
 schemaForm.addEventListener("submit", async (e) => {
   e.preventDefault();
+  track("schema_upload_attempted");
+
   hideBanner();
   setLoading(true);
 
@@ -118,6 +131,8 @@ schemaForm.addEventListener("submit", async (e) => {
 
 generateBtn.addEventListener("click", async (e) => {
   e.preventDefault();
+  track("generate_clicked");
+
   hideBanner();
   setLoading(true);
   sqlOut.textContent = "";
@@ -172,24 +187,29 @@ resetBtn.addEventListener("click", () => {
 });
 
 copySqlBtn.addEventListener("click", async () => {
+  track("copy_sql_clicked");
   try {
     await navigator.clipboard.writeText(sqlOut.textContent || "");
     showBanner("Copied SQL to clipboard.");
     setTimeout(hideBanner, 900);
   } catch {
+    track("copy_failed");
     showBanner("Copy failed (browser permissions).");
   }
 });
 
 copyValBtn.addEventListener("click", async () => {
+  track("copy_validation_clicked");
   try {
     await navigator.clipboard.writeText(valOut.textContent || "");
     showBanner("Copied validation JSON to clipboard.");
     setTimeout(hideBanner, 900);
   } catch {
+    track("copy_failed");
     showBanner("Copy failed (browser permissions).");
   }
 });
+
 
 
 

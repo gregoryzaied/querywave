@@ -55,6 +55,10 @@ This is an early version focused on correctness, safety, and UX clarity.
 
 ---
 
+Deployment note:
+Static assets are cache-busted using query strings (e.g. app.js?v=1.2).
+After JS/CSS changes, bump the version and redeploy to ensure users receive updates.
+
 ## Getting Started (Local)
 
 ```bash
