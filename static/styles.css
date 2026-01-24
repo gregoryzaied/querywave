@@ -13,9 +13,27 @@ h1 { margin: 0 0 6px; }
 }
 .label { display:block; margin-top: 10px; color:#b8c3d1; font-size: 13px; }
 input, textarea { width: 100%; margin-top: 6px; background: #0b1220; color:#e7eef7; border: 1px solid #223048; border-radius: 6px; padding: 6px; }
-button { margin-top: 12px; background: #2d6cff; color:white; border: 0; border-radius: 6px; padding: 6x 6px; cursor: pointer; }
+button { margin-top: 12px; background: #2d6cff; color:white; border: 0; border-radius: 6px; padding: 6px 10px; cursor: pointer; }
 button.ghost { background: transparent; border: 1px solid #223048; color:#e7eef7; }
 button.small { margin-top: 0; padding: 7px 10px; border-radius: 10px; background: transparent; border: 1px solid #223048; color:#e7eef7; }
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+  filter: grayscale(30%);
+}
+
+button:disabled:hover {
+  box-shadow: none;
+  transform: none;
+}
+button.ghost:disabled,
+button.small:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .btnrow { display:flex; gap: 10px; align-items: center; }
 .muted { color:#b8c3d1; font-size: 13px; margin-top: 10px; }
 .pre {
