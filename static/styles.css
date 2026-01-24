@@ -89,3 +89,17 @@ button.small:disabled {
 
 .exbtn:hover { background: rgba(255,255,255,0.06); }
 
+.helper {
+  margin: 10px 0 8px;
+  padding: 10px;
+  border: 1px solid #223048;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+  color: #b8c3d1;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.helper code {
+  color: #e7eef7;
+}

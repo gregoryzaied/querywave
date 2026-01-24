@@ -8,13 +8,16 @@
   defer
   src="https://cloud.umami.is/script.js"
   data-website-id="27d07641-7e61-4c79-b1f2-fe0d40c1af20">
+  
 </script>
+<link rel="icon" href="/static/favicon.ico">
   <link rel="stylesheet" href="/static/styles.css?v=1.2">
 </head>
 <body>
   <div class="wrap">
     <h1>QueryWave</h1>
-    <p class="sub">Upload your schema once, then ask questions. Get SQL + validation warnings.</p>
+    <p class="sub"><b>1)</b> Upload a <code>schema.sql</code> → <b>2)</b> Ask in plain English → <b>3)</b> Click <b>Generate SQL</b>.</p>
+<p class="muted" style="margin-top:8px;">Tip: if you’re just testing, use the example questions below. You don’t paste SQL here — you ask a question.</p>
     <div style="margin-top:16px; opacity:0.75; font-size:14px;">
       Early version — review SQL before production use.
     </div>
@@ -23,6 +26,20 @@
     <div class="row">
       <div class="card">
         <h2>1) Upload schema.sql</h2>
+        <p class="helper">
+          <b>What “schema” means:</b> the <code>CREATE TABLE ...</code> statements that describe your tables/columns.
+          <br />
+          If you don’t have one yet, click <b>Use demo schema</b> to try the tool instantly.
+        </p>
+        
+        <div class="btnrow">
+          <button type="button" id="demoSchemaBtn" class="ghost">Use demo schema</button>
+        </div>
+        
+        <p class="muted">
+          Your file should be a plain <code>.sql</code> file containing table definitions (CREATE TABLE).
+        </p>
+        
         <form id="schemaForm">
           <input type="file" id="schemaFile" name="file" accept=".sql" required />
           <button type="submit">Upload</button>
@@ -40,7 +57,8 @@
         <div class="muted">Queries remaining today: <span id="generatesRemaining">{{ generates_remaining }}</span></div>
 
         <label class="label">Schema ID</label>
-        <input id="schemaId" placeholder="Upload schema first (auto-saved)" />
+        <input id="schemaId" placeholder="After upload, your schema ID appears here automatically" />
+
 
         <label class="label">Question</label>
         <textarea id="question" rows="5" maxlength="{{ max_question_chars }}" placeholder="e.g. List all employees with their branch name"></textarea>

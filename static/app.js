@@ -18,6 +18,8 @@ const schemaId = $id("schemaId");
 const question = $id("question");
 const generateBtn = $id("generateBtn");
 const resetBtn = $id("resetBtn");
+const demoSchemaBtn = $id("demoSchemaBtn");
+
 
 schemaId.addEventListener("input", syncGenerateEnabled);
 
@@ -85,6 +87,51 @@ function loadSchemaId() {
 question.addEventListener("input", () => {
   charCount.textContent = String(question.value.length);
 });
+
+if (demoSchemaBtn) {
+  demoSchemaBtn.addEventListener("click", async () => {
+    track("demo_schema_clicked");
+    hideBanner();
+    setLoading(true);
+
+    try {
+      const blob = new Blob([DEMO_SCHEMA], { type: "text/sql" });
+      const form = new FormData();
+      form.append("file", blob, "demo_schema.sql");
+
+      const res = await fetch("/schema", { method: "POST", body: form });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        showBanner(errData.detail || "Demo schema upload failed.");
+        return;
+      }
+
+      setUsageFromHeaders(res);
+      const data = await res.json();
+
+      const sid = data.schema_id;
+      if (!sid) {
+        showBanner("Demo schema upload failed: no schema_id returned.");
+        return;
+      }
+
+      saveSchemaId(sid);
+
+      schemaInfo.textContent =
+        `Demo schema loaded. Tables: ${data.summary?.tables ?? "?"}, Columns: ${data.summary?.columns ?? "?"}.`;
+
+      showBanner("Demo schema loaded — now type a question and click Generate SQL.");
+      setTimeout(hideBanner, 1400);
+    } catch (err) {
+      showBanner(err.message || String(err));
+    } finally {
+      setLoading(false);
+    }
+  });
+}
+
+
 
 schemaForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -225,6 +272,21 @@ if (copyValBtn) {
   });
 }
 
+const DEMO_SCHEMA = `
+CREATE TABLE branches (
+  branch_id INTEGER PRIMARY KEY,
+  branch_name TEXT NOT NULL,
+  branch_location TEXT
+);
+
+CREATE TABLE employees (
+  emp_id INTEGER PRIMARY KEY,
+  first_name TEXT NOT NULL,
+  last_name TEXT NOT NULL,
+  branch_id INTEGER,
+  FOREIGN KEY (branch_id) REFERENCES branches(branch_id)
+);
+`.trim();
 
 
 
