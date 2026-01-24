@@ -19,6 +19,9 @@ const question = $id("question");
 const generateBtn = $id("generateBtn");
 const resetBtn = $id("resetBtn");
 
+schemaId.addEventListener("input", syncGenerateEnabled);
+
+
 const banner = $id("banner");
 const sqlOut = $id("sqlOut");
 const valOut = $id("valOut");
@@ -51,6 +54,12 @@ function setLoading(isLoading) {
   schemaId.disabled = isLoading;
   generateBtn.textContent = isLoading ? "Generating..." : "Generate SQL";
 }
+function syncGenerateEnabled() {
+  const hasSchema = (schemaId.value || "").trim().length > 0;
+  generateBtn.disabled = !hasSchema;
+  generateBtn.title = hasSchema ? "" : "Upload schema.sql first";
+}
+
 
 function setUsageFromHeaders(res) {
   const remG = res.headers.get("X-RateLimit-Remaining-Generates");
@@ -62,12 +71,16 @@ function setUsageFromHeaders(res) {
 function saveSchemaId(id) {
   localStorage.setItem("qw_schema_id", id);
   schemaId.value = id;
+  syncGenerateEnabled();
 }
+
 
 function loadSchemaId() {
   const id = localStorage.getItem("qw_schema_id");
   if (id) schemaId.value = id;
+  syncGenerateEnabled();
 }
+
 
 question.addEventListener("input", () => {
   charCount.textContent = String(question.value.length);
@@ -177,15 +190,14 @@ generateBtn.addEventListener("click", async (e) => {
 });
 
 resetBtn.addEventListener("click", () => {
-  localStorage.removeItem("qw_schema_id");
+  localStorage.removeItem("qw_schema_id");  // or whatever key you used
   schemaId.value = "";
-  schemaInfo.textContent = "";
-  sqlOut.textContent = "";
-  valOut.textContent = "";
-  msgOut.textContent = "";
-  explainOut.textContent = "";
-  hideBanner();
+  syncGenerateEnabled();
+
+  showBanner("Schema reset.");
+  setTimeout(hideBanner, 900);
 });
+
 
 if (copySqlBtn) {
   copySqlBtn.addEventListener("click", async () => {
@@ -233,6 +245,7 @@ function renderExamples() {
 
   examplesEl.querySelectorAll("button[data-example]").forEach((btn) => {
     btn.addEventListener("click", () => {
+      track("example_clicked");
       const text = decodeURIComponent(btn.getAttribute("data-example") || "");
       question.value = text;
       charCount.textContent = String(question.value.length);
